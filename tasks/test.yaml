@@ -1,0 +1,3 @@
+- name: Test that kafka-manager port is allocated
+  wait_for: host={{ ansible_ec2_public_ipv4|default(ansible_default_ipv4.address) }} port={{ kafka_manager_http_port }}
+            connect_timeout=10 state=started

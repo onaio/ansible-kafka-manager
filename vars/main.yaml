@@ -1,0 +1,4 @@
+---
+kafka_manager_user: kafka_manager
+kafka_manager_base_dir: /opt/kafka-manger
+kafka_manager_service: /etc/systemd/system/kafka-manager.service

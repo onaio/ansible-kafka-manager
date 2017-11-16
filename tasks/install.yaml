@@ -1,0 +1,51 @@
+---
+- name: Install unzip
+  apt:
+    name: unzip
+    state: present
+
+- name: Create kafka manager user
+  user:
+    name: "{{ kafka_manager_user }}"
+
+- name: Create git repository folder
+  file:
+    path: "{{ kafka_manager_base_dir }}"
+    state: directory
+    mode: 0755
+
+- name: Clone kafka-manager git repo
+  git:
+    repo: https://github.com/yahoo/kafka-manager.git
+    dest: "{{ kafka_manager_base_dir }}"
+    version: tags/{{ kafka_manager_version }}
+    force: yes
+
+- name: Build Scala distribution
+  command: ./sbt clean dist
+  args:
+    chdir: "{{ kafka_manager_base_dir }}"
+    creates: "{{ kafka_zip_path }}"
+
+- name: Unzip built code
+  unarchive:
+    src: "{{ kafka_zip_path }}"
+    dest: "{{ kafka_manager_base_dir }}"
+    remote_src: yes
+
+- name: Set user permissions
+  file:
+    path: "{{ kafka_manager_base_dir }}"
+    state: directory
+    owner: "{{ kafka_manager_user }}"
+    group: "{{ kafka_manager_user }}"
+    recurse: yes
+
+- name: Create kafka-manager systemd service file
+  template:
+    src: kafka-manager.service.j2
+    dest: "{{ kafka_manager_service }}"
+    mode: 0750
+  notify:
+    - reload systemctl
+    - restart kafka-manager

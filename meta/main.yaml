@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  author: Ona Engineering
+  description: Installs Kafka Manager
+  min_ansible_version: 2.0
+  license: Apache2
+  platforms:
+    - name: Ubuntu
+      versions:
+        - trusty
+        - xenial
+  categories:
+    - apache
+    - kafka
+    - management

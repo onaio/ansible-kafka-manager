@@ -1,0 +1,30 @@
+[Unit]
+Description=Kafka Manager
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+WorkingDirectory={{ kafka_manager_base_dir }}/kafka-manager-{{ kafka_manager_version }}
+
+User={{ kafka_manager_user }}
+Group={{ kafka_manager_user }}
+
+ExecStart={{ kafka_manager_base_dir }}/kafka-manager-{{kafka_manager_version}}/bin/kafka-manager -Dhttp.port={{ kafka_manager_http_port }}
+
+StandardOutput=journal
+StandardError=inherit
+
+# Disable timeout logic and wait until process is stopped
+TimeoutStopSec=0
+
+# SIGTERM signal is used to stop the Java process
+KillSignal=SIGTERM
+
+# Java process is never killed
+SendSIGKILL=no
+
+# When a JVM receives a SIGTERM signal it exits with code 143
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target
